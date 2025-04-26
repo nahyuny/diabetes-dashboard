@@ -3,6 +3,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 import os
+import logging
+
+# 로깅 설정
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# 업로드 디렉토리 자동 생성
+try:
+    # 몽키 패칭을 사용하여 경로 가져오기
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    uploads_dir = os.path.join(base_dir, "uploads")
+    os.makedirs(uploads_dir, exist_ok=True)
+    logger.info(f"uploads 디렉토리 확인/생성: {uploads_dir}")
+    
+    # 결과 저장용 디렉토리 생성
+    results_dir = os.path.join(uploads_dir, "results")
+    os.makedirs(results_dir, exist_ok=True)
+    logger.info(f"results 디렉토리 확인/생성: {results_dir}")
+except Exception as e:
+    logger.error(f"디렉토리 생성 오류: {str(e)}")
 
 from app.services.auth_service import (
     create_access_token, 

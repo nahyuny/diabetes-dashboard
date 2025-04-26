@@ -1,20 +1,24 @@
-from celery import Celery
+# 참고: 이 파일은 더 이상 사용되지 않습니다. 현재는 동기식 처리로 변경되었습니다.
+# 이전에 사용하던 Celery 비동기 처리 방식의 코드입니다.
+
+# from celery import Celery
 from app.preprocessing.health_data_processor import HealthDataProcessor
 from app.analysis.diabetes_analyzer import DiabetesAnalyzer
 from app.db.crud import update_task_status, save_analysis_results
 import os
 import json
 
-celery_app = Celery('diabetes_dashboard')
-celery_app.conf.broker_url = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
-celery_app.conf.result_backend = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+# celery_app = Celery('diabetes_dashboard')
+# celery_app.conf.broker_url = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+# celery_app.conf.result_backend = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
 
-@celery_app.task(bind=True)
-def process_health_data_task(self, file_id):
+# @celery_app.task(bind=True)
+def process_health_data_task(file_id):
     """학생 건강검사 데이터 처리 및 분석 작업"""
     try:
         # 작업 시작 상태 업데이트
-        update_task_status(self.request.id, 'processing')
+        # Celery task ID가 없으므로 task_id를 직접 전달해야 함
+        # update_task_status(self.request.id, 'processing')
         
         # 파일 정보 가져오기
         from app.db.crud import get_file_info
@@ -55,19 +59,19 @@ def process_health_data_task(self, file_id):
         save_analysis_results(file_id, self.request.id, analysis_results)
         
         # 6. 작업 상태 업데이트
-        update_task_status(self.request.id, 'completed')
+        # update_task_status(self.request.id, 'completed')
         
         return {
             'status': 'success',
             'file_id': file_id,
-            'task_id': self.request.id
+            'task_id': 'direct_process'  # Celery 없이 직접 처리된 경우
         }
         
     except Exception as e:
         # 오류 발생 시 상태 업데이트
-        update_task_status(self.request.id, 'failed', str(e))
+        # update_task_status(self.request.id, 'failed', str(e))
         
-        # 예외 다시 발생시켜 Celery에 오류 전달
+        # 예외 다시 발생
         raise
 
 def convert_to_serializable(obj):
