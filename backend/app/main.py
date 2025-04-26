@@ -47,11 +47,18 @@ origins = [
     "http://localhost:8080",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:8080",
+    "https://diabetes-dashboard.onrender.com",  # Render.com 프론트엔드 URL
+    "https://diabetes-dashboard-api.onrender.com",  # Render.com 백엔드 URL
+    "http://diabetes-dashboard.onrender.com",  # HTTP 프로토콜 지원
+    "http://diabetes-dashboard-api.onrender.com"  # HTTP 프로토콜 지원
 ]
 
 # 프로덕션 환경에서는 실제 도메인 추가
 if os.environ.get("PRODUCTION_DOMAIN"):
-    origins.append(os.environ.get("PRODUCTION_DOMAIN"))
+    production_domains = os.environ.get("PRODUCTION_DOMAIN").split(',')
+    for domain in production_domains:
+        if domain.strip():
+            origins.append(domain.strip())
 
 app.add_middleware(
     CORSMiddleware,
@@ -59,6 +66,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]  # 추가 헤더 노출
 )
 
 # 라우터 등록
