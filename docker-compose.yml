@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # 프론트엔드 서비스
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+    restart: always
+
+  # 백엔드 API 서비스
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - DATABASE_URL=sqlite:///data/database.db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-default_secret_key_for_development}
+      - DEBUG=1
+    volumes:
+      - uploaded_files:/app/uploads
+      - ./data:/app/data
+    restart: always
+
+  # Celery 워커
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    depends_on:
+      - backend
+      - redis
+    environment:
+      - DATABASE_URL=sqlite:///data/database.db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - uploaded_files:/app/uploads
+      - ./data:/app/data
+    command: celery -A app.worker worker -l info
+    restart: always
+
+  # Redis (캐싱 및 Celery 백엔드)
+  redis:
+    image: redis:6
+    volumes:
+      - redis_data:/data
+    restart: always
+
+volumes:
+  redis_data:
+  uploaded_files:
