@@ -47,10 +47,12 @@ origins = [
     "http://localhost:8080",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:8080",
-    "https://diabetes-dashboard.onrender.com",  # Render.com 프론트엔드 URL
-    "https://diabetes-dashboard-api.onrender.com",  # Render.com 백엔드 URL
+    "https://diabetes-dashboard.onrender.com",  # 예상 프론트엔드 URL
+    "https://diabetes-dashboard-api.onrender.com",  # 예상 백엔드 URL
     "http://diabetes-dashboard.onrender.com",  # HTTP 프로토콜 지원
-    "http://diabetes-dashboard-api.onrender.com"  # HTTP 프로토콜 지원
+    "http://diabetes-dashboard-api.onrender.com",  # HTTP 프로토콜 지원
+    "https://diabetes-dashboard-8l7h.onrender.com",  # 실제 프론트엔드 URL
+    "http://diabetes-dashboard-8l7h.onrender.com"  # HTTP 프로토콜 지원
 ]
 
 # 프로덕션 환경에서는 실제 도메인 추가
