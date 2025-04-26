@@ -39,6 +39,20 @@
 - Nginx: 웹 서버 및 리버스 프록시(선택)
 - 또는 Netlify/Vercel(프론트엔드) + Heroku/Render(백엔드) 조합으로 배포 가능
 
+## 실행 화면
+
+### 로그인 화면
+![로그인 화면](screen/screen1.png)
+
+### 데이터 업로드 화면
+![데이터 업로드 화면](screen/screen2.png)
+
+### 대시보드 - 요약 보고서
+![대시보드 - 요약 보고서](screen/screen3.png)
+
+### 대시보드 - 상관관계 분석
+![대시보드 - 상관관계 분석](screen/screen4.png)
+
 ## 시작하기
 
 ### 전제 조건
